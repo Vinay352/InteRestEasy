@@ -13,6 +13,10 @@ nav{
     background-color: var(--dark-color);
 }
 
+.bottomHeadingUnderline{
+    border-bottom: 1px solid var(--primary-color);
+}
+
 footer{
     background-color: var(--dark-color);
 }
@@ -49,6 +53,21 @@ footer .social > a:hover{
 
 .cssicon{
     color: rgb(11,82,214);
+}
+
+#btnSubmit:hover{
+    background-color: rgb(235, 235, 235);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.tableHead{
+    background-color: var(--primary-color);
+    color: white;
+}
+
+#inputDiv{
+    background-color: rgb(235, 235, 235);
 }
 
 .logoFont{

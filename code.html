@@ -59,28 +59,195 @@
     <!-- MAIN Section -->
     <main class="flex-shrink-0">
        <div class="container px-4 py-5 mt-5">
-        <h2 class="border-1 border-bottom border-dark">
-            The Code For "App Name".
+        <h2 class="bottomHeadingUnderline">
+            The Code For InteRestEasy.
         </h2>
            <div class="row row-cols-1 row-cols-lg-2">
                 <!-- CODE -->
                 <div class="col-lg-8">
                     <pre class="line-numbers">
                         <code class="language-javascript">
-                            // Call HelloWorld
-                            function HelloWorld(){
-                                alert("Hello World");
+                            // get values from the UI
+                            function getValues(){
+                                // get loan amount from the UI
+                                let loanAmount = document.getElementById("loanAmount").value;
+                                loanAmount = parseFloat(parseFloat(loanAmount).toFixed(2));
+
+                                // get payments from the UI
+                                let payments = document.getElementById("payments").value;
+                                payments = parseFloat(parseFloat(payments).toFixed(2));
+
+                                // get interest rate from the UI
+                                let interestRate = document.getElementById("interestRate").value;
+                                interestRate = parseFloat(parseFloat(interestRate).toFixed(2));
+
+                                // calculate the interest, payments
+                                calculateInterest(loanAmount, payments, interestRate);
+                            }
+
+
+                            // apply the formula and calculate arrays of new principal, interest, total interest, balance
+                            function calculateInterest(principal, numberOfMonthlyPayments, interestRate){
+                                // create the table
+                                let returnValues = displayTable(numberOfMonthlyPayments, principal, interestRate);
+
+                                // retreive monthly payments and total interest value
+                                let monthlyPayments = returnValues.monthlyPayments;
+                                let totalInterestPayment = returnValues.totalInterestPayment;
+                                
+                                // now display details regarding total cost, principal, interest and monthly payments
+                                displayTotalValues(principal, totalInterestPayment, monthlyPayments * numberOfMonthlyPayments, monthlyPayments);
+                            }
+
+
+                            // display values on th UI 
+                            // right hand side of input
+                            function displayTotalValues(principal, totalInterest, accruedValue, monthlyPayments){
+
+                                accruedValue = parseFloat(parseFloat(accruedValue).toFixed(2));
+
+                                // monthlyPayments
+                                document.getElementById("monthlyPayments").innerHTML = `<strong>$${monthlyPayments}</strong>`;
+
+                                // totalPrincipal, totalInterest, totalCost
+                                document.getElementById("totalPrincipal").innerHTML = "Total Principal: $" + principal;
+                                document.getElementById("totalInterest").innerHTML = "Total Interest: $" + totalInterest;
+                                document.getElementById("totalCost").innerHTML = "" + `<strong>Total Cost: $${ + accruedValue}</strong>`;
+
+                            }
+
+                            // create the table with monthly details for remaniing balance, payments and interest
+                            function displayTable(numberOfMonthlyPayments, principal, interestRate){
+                                // create the table body
+                                // <tr>
+                                //   <th scope="row">1</th>
+                                //   <td>Mark</td>
+                                //   <td>Otto</td>
+                                //   <td>@mdo</td>
+                                // </tr>
+
+                                let templateRows = ""; // to hold html format for rows
+                                let tempTemplate = ``; // to hold every table data element
+
+                                // monthly payments
+                                let monthlyPayments = parseFloat(parseFloat(principal * (interestRate/1200) / ( 1 - Math.pow(1 + interestRate/1200, -numberOfMonthlyPayments) ) ).toFixed(2));
+                                // remaining balance
+                                let remainingBalance = parseFloat(parseFloat(principal).toFixed(2));
+                                // interest payment
+                                let interestPayment = parseFloat(parseFloat(remainingBalance * interestRate / 1200).toFixed(2));
+                                // total Interest Payment
+                                let totalInterestPayment = parseFloat(parseFloat(interestPayment).toFixed(2));
+                                // principal payment
+                                let principalPayment = parseFloat(parseFloat(monthlyPayments - interestPayment).toFixed(2));
+
+                                for(let i = 1; i <= numberOfMonthlyPayments; i++){
+                                    // Month and monthly payments
+                                    tempTemplate = `<th scope="row">${i}</th><td>${monthlyPayments}</td>`;
+
+                                    // principal payment
+                                    tempTemplate += `<td>${principalPayment}</td>`;
+
+                                    // interest payment
+                                    tempTemplate += `<td>${interestPayment}</td>`;
+
+                                    // total interest 
+                                    tempTemplate += `<td>${totalInterestPayment}</td>`;
+
+                                    // remaining balance
+                                    remainingBalance = parseFloat(parseFloat(remainingBalance - principalPayment).toFixed(2));
+                                    tempTemplate += `<td>${remainingBalance}</td>`;
+
+                                    // updates for next round
+                                    if(i != numberOfMonthlyPayments){
+                                        interestPayment = parseFloat(parseFloat(remainingBalance * interestRate / 1200).toFixed(2));
+                                        totalInterestPayment = parseFloat(parseFloat(totalInterestPayment + interestPayment).toFixed(2));
+                                        principalPayment = parseFloat(parseFloat(monthlyPayments - interestPayment).toFixed(2));
+                                    }
+                                    
+                                    // create a row
+                                    templateRows += `<tr>${tempTemplate}</tr>`;
+                                }
+
+                                // updatye html body with table details
+                                document.getElementById("results").innerHTML = templateRows;
+
+                                return {
+                                    'monthlyPayments' : monthlyPayments,
+                                    'totalInterestPayment' : totalInterestPayment
+                                };
+
                             }
                         </code>
                     </pre>
                 </div>
 
                 <!-- DESCRIPTION -->
-                <div class="col-lg-4">
+                <div class="col-lg-4 mt-2">
+
                     <p>The code is strucutred in the box and next to it is the description of the code.</p>
 
-                    <h5>Hello World</h5>
-                    <p>Hello world is afunction that displays an alert generated "Hello World" whenever this function is called.</p>
+                    <hr class="bottomHeadingUnderline">
+
+                    <h5>Function: getValues</h5>
+                    <p>
+                        This function is responsible for gettig input values of the loan amount, interest rate and the number of monthly payments to be made from the UI as float(decimal) and not integers.
+                    </p>
+
+                    <hr class="bottomHeadingUnderline">
+
+                    <h5>Function: calculateInterest</h5>
+                    <p>
+                        This is where we use the formulaes to calculate the monthly payment that need to be made and calling a function to display the table format of the necessary details (displayTable), along with calling another function to display the overview of the loan right adjacent to the input section (displayTotalValues).
+                    </p>
+
+                    <hr class="bottomHeadingUnderline">
+
+                    <h5>Function: displayTotalValues</h5>
+                    <p>
+                        This function after getting the returned values from 'displayTable' function which consists of 'monthlyPayments' and 'totalInterestPayment'. And these details are used to display the total principal, the total interest charged and finally the toal cost.
+                    </p>
+
+                    <hr class="bottomHeadingUnderline">
+
+                    <h5>Function: displayTable</h5>
+                    <p>
+                        This function is where the main idea of the application is executed. This function is responsbile for calculating the following details for every month the interest is applied i.e. for the 'Number Of Monthly Payments' input:- 
+                        <ul>
+                            <li>
+                                <b>monthlyPayments</b> - amount to be paid monthly
+                            </li>
+                            <li>
+                                <b>remainingBalance</b> - the amount that is remaining to be paid
+                            </li>
+                            <li>
+                                <b>interestPayment</b> - the interest that is paid every month
+                            </li>
+                            <li>
+                                <b>totalInterestPayment</b> - the total interest that has been paid so far
+                            </li>
+                            <li>
+                                <b>principalPayment</b> - the principal amount paid this month
+                            </li>
+                        </ul>
+                        The formulaes used for every parameter is defined below for your reference:
+                        <ul>
+                            <li>
+                                <b>Total Monthly Payment</b> = (amount loaned) * (rate/1200) / (1 – (1 + rate/1200)^(-Number of Months) )
+                            </li>
+                            <li>
+                                <b>Interest Payment</b> = Previous Remaining Balance * rate/1200
+                            </li>
+                            <li>
+                                <b>Principal Payment</b> = Total Monthly Payment - Interest Payment
+                            </li>
+                            <li>
+                                <b>Remaining Balance</b> = Previous Remaining Balance - principal payments
+                            </li>
+                        </ul>
+                        <strong>NOTE:</strong> Remaining Balance before the very first month equals the amount of the loan.
+                    </p>
+
+                    <hr class="bottomHeadingUnderline">
 
                 </div>
            </div>
